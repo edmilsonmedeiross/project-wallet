@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { login } from '../redux/actions';
+import { fetchApi } from '../redux/actions';
 
 class Login extends React.Component {
   state = {
@@ -33,7 +33,7 @@ class Login extends React.Component {
           disabled={ password.length < +'6' || !email.match(
             /^((?!\.)[\w\-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/gm,
           ) }
-          onClick={ () => dispatch(login(email)) && history.push('/carteira') }
+          onClick={ () => { dispatch(fetchApi(email)); history.push('/carteira'); } }
         >
           Entrar
         </button>
