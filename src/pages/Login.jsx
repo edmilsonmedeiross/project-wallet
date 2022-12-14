@@ -25,7 +25,7 @@ class Login extends React.Component {
         <input
           type="password"
           onChange={ (e) => this.setState({ password: e.target.value }) }
-          placeholder="Senha"
+          placeholder="password"
           data-testid="password-input"
         />
         <button
