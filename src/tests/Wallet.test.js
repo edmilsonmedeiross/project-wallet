@@ -125,4 +125,5 @@ describe('WalletForm', () => {
     expect(buttonAdd).toBeInTheDocument();
     expect(brlEl).toBeInTheDocument();
   });
+  // coment
 });
