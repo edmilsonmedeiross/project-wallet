@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { globalFetchApi } from '../redux/actions';
+import { globalFetchApi, expenseEdit } from '../redux/actions';
 
 class WalletForm extends Component {
   state = {
@@ -18,6 +18,22 @@ class WalletForm extends Component {
     });
   };
 
+  clearForm = () => {
+    this.setState({
+      value: '',
+      description: '',
+      currency: 'USD',
+      method: 'Dinheiro',
+      tag: 'Alimentação',
+    });
+  };
+
+  editForm = () => {
+    const { dispatch } = this.props;
+    dispatch(expenseEdit(this.state));
+    this.clearForm();
+  };
+
   handleClickButton = () => {
     const { value, description, currency, method, tag } = this.state;
     const { dispatch, expenses } = this.props;
@@ -32,19 +48,13 @@ class WalletForm extends Component {
     };
 
     dispatch(globalFetchApi(expense));
-    this.setState({
-      value: '',
-      description: '',
-      currency: 'USD',
-      method: 'Dinheiro',
-      tag: 'Alimentação',
-    });
+    this.clearForm();
   };
 
   render() {
     const { value, description, method, tag } = this.state;
     const {
-      currencies: { currencies },
+      currencies: { currencies }, editor,
     } = this.props;
     // const filteredCurrencies = currencies.filter((currency) => currency !== 'USDT');
     return (
@@ -107,9 +117,9 @@ class WalletForm extends Component {
         </form>
         <button
           type="button"
-          onClick={ this.handleClickButton }
+          onClick={ editor ? this.editForm : this.handleClickButton }
         >
-          Adicionar despesa
+          { editor ? 'Editar Despesa' : 'Adicionar despesa' }
         </button>
       </div>
     );
@@ -119,9 +129,11 @@ class WalletForm extends Component {
 const mapStateToProps = (state) => ({
   currencies: state.wallet,
   expenses: state.wallet.expenses,
+  editor: state.wallet.editor,
 });
 
 WalletForm.propTypes = {
+  editor: PropTypes.bool.isRequired,
   dispatch: PropTypes.func.isRequired,
   expenses: PropTypes.instanceOf(Array).isRequired,
   currencies: PropTypes.shape({

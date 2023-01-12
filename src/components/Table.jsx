@@ -1,8 +1,20 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { expenseDelete, expenseEditSave } from '../redux/actions';
 
 class Table extends Component {
+  handleDelete = (idx) => {
+    const { expenses, dispatch } = this.props;
+    const expenseWithDeletedId = expenses.filter((expense) => expense.id !== idx);
+    dispatch(expenseDelete(expenseWithDeletedId));
+  };
+
+  handleEdit = (e) => {
+    const { dispatch } = this.props;
+    dispatch(expenseEditSave(e.target.id));
+  };
+
   render() {
     const { expenses } = this.props;
     return (
@@ -22,10 +34,9 @@ class Table extends Component {
 
         <tbody>
           {expenses.map((
-            { description, tag, method, currency, exchangeRates, value },
-            index,
+            { description, tag, method, currency, exchangeRates, value, id },
           ) => (
-            <tr key={ index }>
+            <tr key={ id }>
               <td>{ description }</td>
               <td>{ tag }</td>
               <td>{ method }</td>
@@ -34,6 +45,23 @@ class Table extends Component {
               <td>{ parseFloat(exchangeRates[currency].ask).toFixed(2) }</td>
               <td>{ (value * exchangeRates[currency].ask).toFixed(2) }</td>
               <td>Real</td>
+              <td>
+                <button
+                  id={ id }
+                  type="button"
+                  data-testid="edit-btn"
+                  onClick={ (e) => this.handleEdit(e) }
+                >
+                  Editar
+                </button>
+                <button
+                  type="button"
+                  data-testid="delete-btn"
+                  onClick={ () => this.handleDelete(id) }
+                >
+                  Delete
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>
@@ -43,6 +71,7 @@ class Table extends Component {
 }
 
 Table.propTypes = {
+  dispatch: PropTypes.func.isRequired,
   expenses: PropTypes.arrayOf(PropTypes.shape({
     value: PropTypes.string.isRequired,
     currency: PropTypes.string.isRequired,
